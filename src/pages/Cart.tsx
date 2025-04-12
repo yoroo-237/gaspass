@@ -129,7 +129,7 @@ const Cart: React.FC = () => {
                               <small className="text-muted">Quantity: {item.quantity || 1}</small>
                             </td>
                             <td className="text-end">
-                              {(item.price * (item.quantity || 1)).toLocaleString()} FCFA
+                              {(item.price * (item.quantity || 1)).toLocaleString()} $
                             </td>
                             <td className="text-end">
                               <Button
@@ -152,7 +152,7 @@ const Cart: React.FC = () => {
                     <Card.Body>
                       <div className="d-flex justify-content-between mb-2">
                         <span>Subtotal ({itemCount} items)</span>
-                        <span>{total.toLocaleString()} FCFA</span>
+                        <span>{total.toLocaleString()} $</span>
                       </div>
                       <div className="d-flex justify-content-between mb-2">
                         <span>Shipping</span>
@@ -161,7 +161,7 @@ const Cart: React.FC = () => {
                       <hr />
                       <div className="d-flex justify-content-between fw-bold fs-5">
                         <span>Total</span>
-                        <span>{total.toLocaleString()} FCFA</span>
+                        <span>{total.toLocaleString()} $</span>
                       </div>
                     </Card.Body>
                   </Card>

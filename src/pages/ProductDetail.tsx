@@ -5,16 +5,7 @@ import { StarFill, CartPlus, ArrowLeft } from "react-bootstrap-icons";
 import useCartStore from "../context/cartStore";
 import featuredProducts from "../data/ProductData";
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  category: string;
-  price: number;
-  image: string;
-  rating?: number;
-  stock: number;
-}
+
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -83,7 +74,7 @@ const ProductDetails: React.FC = () => {
             </div>
           )}
 
-          <h3 className="mb-4">{product.price.toLocaleString()} FCFA</h3>
+          <h3 className="mb-4">{product.price.toLocaleString()} $</h3>
 
           <div className="mb-4">
             <h5>Description</h5>

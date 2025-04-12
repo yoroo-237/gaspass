@@ -101,6 +101,8 @@ const Products: React.FC = () => {
             className="form-select form-select-sm"
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
+            aria-label="Sort products by"
+            title="Sort products by"
           >
             <option value="Relevance">Sort by: Relevance</option>
             <option value="Price (ascending)">Price (ascending)</option>

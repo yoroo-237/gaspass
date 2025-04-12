@@ -173,7 +173,7 @@ const Home: React.FC = () => {
                     </Card.Text>
                     <div className="d-flex justify-content-between align-items-center mt-3">
                       <span className="price">
-                        {product.price.toLocaleString()} FCFA
+                        {product.price.toLocaleString()} $
                       </span>
                       <span className="rating">
                         <StarFill className="text-warning" />{" "}

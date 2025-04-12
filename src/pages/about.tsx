@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import './About.css'; // Fichier CSS
+import  { useState, useEffect } from "react";
+import './about.css'; // Fichier CSS
 
 const About = () => {
   // État pour suivre si le mode sombre est activé

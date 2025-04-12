@@ -146,11 +146,11 @@ const Category: React.FC = () => {
                   <div className="mt-auto">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                       <h5 className="mb-0 text-danger">
-                        {product.price.toLocaleString()} FCFA
+                        {product.price.toLocaleString()} $
                       </h5>
                       {product.discount && (
                         <small className="text-decoration-line-through text-muted">
-                          {(product.price * (1 + product.discount / 100)).toLocaleString()} FCFA
+                          {(product.price * (1 + product.discount / 100)).toLocaleString()} $
                         </small>
                       )}
                     </div>

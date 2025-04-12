@@ -17,7 +17,7 @@ const formatOrderDetails = (
 ): string => {
   const items = cart.map(
     (item) =>
-      `• ${item.name} (x${item.quantity || 1}) - $${item.price * (item.quantity || 1)} FCFA`
+      `• ${item.name} (x${item.quantity || 1}) - $${item.price * (item.quantity || 1)} $`
   ).join('\n');
 
   return `🧾 *Nouvelle commande* 🧾
@@ -29,7 +29,7 @@ const formatOrderDetails = (
 📦 *Articles* :
 ${items}
 
-💰 *Total* : ${total.toLocaleString()} FCFA`;
+💰 *Total* : ${total.toLocaleString()} $`;
 };
 
 const sendCheckoutInfo = async (

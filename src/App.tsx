@@ -6,12 +6,10 @@ import Cart from "./pages/Cart";
 import Payment from "./pages/Payment";
 import Blog from "./pages/Blog"; // Assurez-vous que cette page existe
 import Contact from "./pages/Contact"; // Assurez-vous que cette page existe
-// import Category from "./pages/Category"; // Page pour les catégories
 import Navbar from "./components/NavBar";
 import ProductDetails from "./pages/ProductDetail";
 import ArticleDetail from "./pages/ArticleDetail";
 import Footer from "./components/footer";
-import Dashboard from "./pages/dashboard";
 import './darkTheme.css';
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -32,7 +30,6 @@ function App() {
         <Route path="/blog/:id" element={<ArticleDetail />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/About" element={<About />} />
-        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
       <Footer />
     </div>
