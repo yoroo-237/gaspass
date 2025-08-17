@@ -7,6 +7,7 @@
   },
   "scripts": {
     "start": "node server.cjs",
-    "dev": "nodemon server.cjs"
+    "dev": "nodemon server.cjs",
+    "build": "echo 'Aucune étape de build nécessaire pour le backend Node.js'"
   }
 }

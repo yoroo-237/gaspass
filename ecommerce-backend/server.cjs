@@ -3,7 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const { Client } = require('pg');
 const app = express();
-const PORT = 5000;
+const host = process.env.DB_HOST;
+const port = process.env.DB_PORT;
 
 app.use(cors());
 app.use(express.json());
@@ -116,6 +117,6 @@ app.get('/api/reviews', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend lancé sur http://localhost:${PORT}`);
+app.listen(port, host, () => {
+  console.log(`Backend lancé sur ${host}:${port}`);
 });
