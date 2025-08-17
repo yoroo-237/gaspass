@@ -3,14 +3,15 @@ import { Button, Card, Container, Row, Col, Badge } from "react-bootstrap";
 import { StarFill, CartPlus, Eye } from "react-bootstrap-icons";
 import useCartStore from "../context/cartStore";
 import { useNavigate } from "react-router-dom";
-import featuredProducts from "../data/ProductData";
+import { getFeaturedProducts } from "../data/ProductData";
+import { getCategories } from '../data/CategoryData';
 import "./productcss.css";
 
 interface Product {
   id: number;
   name: string;
   description: string;
-  category: string;
+  category: number;       // désormais un ID
   price: number;
   image: string;
   rating?: number;
@@ -21,16 +22,26 @@ const Products: React.FC = () => {
   const { addToCart } = useCartStore();
   const navigate = useNavigate();
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  // selectedCategory est soit 'All', soit un number
+  const [selectedCategory, setSelectedCategory] = useState<string | number>('All');
   const [sortOrder, setSortOrder] = useState<string>("Relevance");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const productsPerPage = 8;
+  
+  const [featuredProducts, setFeaturedProducts] = React.useState<Product[]>([]);
+  const [categories, setCategories] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    getFeaturedProducts().then(setFeaturedProducts).catch(console.error);
+    getCategories().then(setCategories).catch(console.error);
+  }, []);
 
   const totalPages = Math.ceil(featuredProducts.length / productsPerPage);
-
-  const filteredProducts = featuredProducts.filter((product) => {
-    if (selectedCategory === "All") return true;
-    return product.category === selectedCategory;
+  // Filtrage sur categoryId
+  const filteredProducts = featuredProducts.filter(product => {
+    return selectedCategory === 'All'
+      ? true
+      : product.category === selectedCategory;
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -56,51 +67,65 @@ const Products: React.FC = () => {
   };
 
   const handleAddToCart = (product: Product, e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    if (product.stock > 0) {
-      addToCart({
+  e.stopPropagation();
+  if (product.stock > 0) {
+    addToCart({
         id: product.id,
         name: product.name,
         price: product.price,
         image: product.image,
         quantity: 1,
-        category: "",
-        stock: 0,
-        description: "",
+        category: product.category.toString(),
+        stock: product.stock,
+        description: product.description,
       });
     } else {
       alert("Product out of stock");
     }
   };
-
+  
   const handleProductClick = (productId: number) => {
     navigate(`/products/${productId}`);
   };
+
+  const categoryList = [
+    { id: 'All', name: 'All' },
+    ...categories.map(cat => ({ id: cat.id, name: cat.name }))
+  ];
 
   return (
     <Container className="products-page py-5">
       <h1 className="text-center mb-5 section-title">Our Products</h1>
 
-      {/* Filters and sorting */}
-      <div className="d-flex justify-content-between mb-4 flex-wrap gap-2">
-        <div>
-          {["All", "1", "2", "3"].map((cat) => (
+      {/* Filtres et tri */}
+      <div className="mb-4">
+        {/* Boutons de catégorie */}
+        <div className="mb-2">
+          {categoryList.map(cat => (
             <Button
-              key={cat}
-              variant="outline-secondary"
+              key={cat.id}
+              variant={selectedCategory === cat.id ? 'primary' : 'outline-secondary'}
               size="sm"
               className="me-2"
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => {
+                setSelectedCategory(cat.id);
+                setCurrentPage(1);
+              }}
             >
-              {cat === "All" ? "All" : `Category ${cat}`}
+              {cat.name}
             </Button>
           ))}
         </div>
+
+        {/* Dropdown de tri */}
         <div>
           <select
             className="form-select form-select-sm"
             value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
+            onChange={e => {
+              setSortOrder(e.target.value);
+              setCurrentPage(1);
+            }}
             aria-label="Sort products by"
             title="Sort products by"
           >
@@ -112,9 +137,9 @@ const Products: React.FC = () => {
         </div>
       </div>
 
-      {/* Product Cards */}
+      {/* Cartes produit */}
       <Row xs={1} sm={1} md={2} lg={3} xl={3} className="g-4">
-        {currentProducts.map((product) => (
+        {currentProducts.map(product => (
           <Col key={product.id}>
             <Card
               className="h-100 product-card shadow-lg"
@@ -131,16 +156,13 @@ const Products: React.FC = () => {
                 src={product.image}
                 alt={product.name}
                 className="product-img"
-                style={{
-                  height: "280px",
-                  objectFit: "cover",
-                }}
+                style={{ height: "280px", objectFit: "cover" }}
               />
               <Card.Body className="d-flex flex-column justify-content-between">
                 <div>
                   <div className="d-flex justify-content-between align-items-start mb-2">
                     <Badge bg="light" text="dark">
-                      {product.category}
+                      {categories.find(c => c.id === product.categoryId)?.name}
                     </Badge>
                     {product.rating && (
                       <div className="d-flex align-items-center">
@@ -155,27 +177,25 @@ const Products: React.FC = () => {
                   </Card.Text>
                 </div>
                 <div className="d-flex justify-content-between align-items-center mt-3">
-                  <h5 className="price mb-0">{product.price.toLocaleString()} FCFA</h5>
+                  <h5 className="price mb-0">{product.price.toLocaleString()} $</h5>
                   <div className="d-flex gap-2">
                     <Button
                       variant="outline-primary"
                       size="sm"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         handleProductClick(product.id);
                       }}
                     >
-                      <Eye className="me-1" />
-                      View
+                      <Eye className="me-1" /> View
                     </Button>
                     <Button
                       variant={product.stock > 0 ? "danger" : "secondary"}
                       size="sm"
-                      onClick={(e) => handleAddToCart(product, e)}
+                      onClick={e => handleAddToCart(product, e)}
                       disabled={product.stock <= 0}
                     >
-                      <CartPlus className="me-1" />
-                      {product.stock > 0 ? "Add" : "Unavailable"}
+                      <CartPlus className="me-1" /> {product.stock > 0 ? "Add" : "Unavailable"}
                     </Button>
                   </div>
                 </div>

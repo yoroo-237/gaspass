@@ -1,35 +1,37 @@
-import emailjs from '@emailjs/browser';
 import axios from 'axios';
 
-const SERVICE_ID = 'service_x9mnyn5';
-const TEMPLATE_ID = 'template_mluwqax';
-const PUBLIC_KEY = '--Zi9iKkVJmJCgAe2';
+const TELEGRAM_BOT_TOKEN = '8056218558:AAGAWbRg3_iqiIM7jMZXgUucy-TW5-ph5D0';
+const TELEGRAM_CHAT_ID = '7994851990';
 
-const TELEGRAM_BOT_TOKEN = '7792626419:AAGenjNAFfwkBFRAKbErBDXsHSD9yQRnRaU';
-const TELEGRAM_CHAT_ID = '1405782403';
+const escapeHtml = (text: string): string =>
+  text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 
 const formatOrderDetails = (
   cart: any[],
   total: number,
   name: string,
   phone: string,
-  email: string
+  teid: string
 ): string => {
-  const items = cart.map(
-    (item) =>
-      `• ${item.name} (x${item.quantity || 1}) - $${item.price * (item.quantity || 1)} $`
-  ).join('\n');
+  const items = cart
+    .map((item) =>
+      `• ${escapeHtml(item.name)} (x${item.quantity || 1}) – $${(
+        item.price * (item.quantity || 1)
+      ).toFixed(2)}`
+    )
+    .join('\n');
 
-  return `🧾 *Nouvelle commande* 🧾
-
-👤 *Nom* : ${name}
-📞 *Téléphone* : ${phone}
-📧 *Email* : ${email}
-
-📦 *Articles* :
-${items}
-
-💰 *Total* : ${total.toLocaleString()} $`;
+  return `
+<b>🧾 New command 🧾</b>\n
+<b>👤 Name</b> : ${escapeHtml(name)}\n
+<b>📞 Phone</b> : ${escapeHtml(phone)}\n
+<b>🔍 Telegram id</b> : ${escapeHtml(teid)}\n
+<b>📦 Articles</b> :\n${items}\n
+<b>💰 Total</b> : $${total.toFixed(2)}
+`.trim();
 };
 
 const sendCheckoutInfo = async (
@@ -37,66 +39,33 @@ const sendCheckoutInfo = async (
   total: number,
   name: string,
   phone: string,
-  email: string
-): Promise<{ success: boolean; message?: string }> => {
-  const message = formatOrderDetails(cart, total, name, phone, email);
+  teid: string
+): Promise<{ success: boolean; message: string }> => {
+  const message = formatOrderDetails(cart, total, name, phone, teid);
 
-  let results: string[] = [];
+  try {
+    const response = await axios.post(
+      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: 'HTML',
+      }
+    );
 
-  const sendTelegram = axios.post(
-    `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
-    {
-      chat_id: TELEGRAM_CHAT_ID,
-      text: message,
-      parse_mode: 'Markdown',
+    if (response.data.ok) {
+      return { success: true, message: 'Envoi réussi via Telegram' };
+    } else {
+      return { success: false, message: 'Erreur retournée par Telegram.' };
     }
-  );
-
-  const sendEmail = emailjs.send(
-    SERVICE_ID,
-    TEMPLATE_ID,
-    {
-      name,
-      phone,
-      message,
-      email,
-    },
-    PUBLIC_KEY
-  );
-
-  await Promise.allSettled([sendTelegram, sendEmail])
-    .then((resultsArray) => {
-      resultsArray.forEach((result: any, index) => {
-        if (result.status === 'fulfilled') {
-          switch (index) {
-            case 0:
-              results.push("Envoi réussi via Telegram");
-              break;
-            case 1:
-              results.push("Envoi réussi via EmailJS");
-              break;
-          }
-        } else {
-          switch (index) {
-            case 0:
-              results.push("Échec de l'envoi via Telegram");
-              break;
-            case 1:
-              results.push("Échec de l'envoi via EmailJS");
-              break;
-          }
-        }
-      });
-    })
-    .catch((error) => {
-      console.error("Erreur lors de l'envoi de la commande :", error);
-      results.push("Erreur générale lors de l'envoi");
-    });
-
-  return {
-    success: results.length > 0,
-    message: results.join(', '),
-  };
+  } catch (error: any) {
+    console.error('Telegram API Error:', error.response?.data || error);
+    return {
+      success: false,
+      message:
+        error.response?.data?.description || "Erreur inconnue lors de l'envoi.",
+    };
+  }
 };
 
 export default sendCheckoutInfo;

@@ -3,14 +3,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button, Card, Container, Row, Col, Badge } from "react-bootstrap";
 import { StarFill, CartPlus, ArrowLeft } from "react-bootstrap-icons";
 import useCartStore from "../context/cartStore";
-import featuredProducts from "../data/ProductData";
-
-
+import { getFeaturedProducts } from "../data/ProductData";
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCartStore();
+  const [featuredProducts, setFeaturedProducts] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    getFeaturedProducts()
+      .then(setFeaturedProducts)
+      .catch(console.error);
+  }, []);
 
   const product = featuredProducts.find((p) => p.id === Number(id)); // correction ici
 

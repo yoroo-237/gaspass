@@ -12,7 +12,7 @@ const Cart: React.FC = () => {
 
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [customerEmail, setCustomerEmail] = useState(""); // Ajout de l'email
+  const [customertid, setCustomertid] = useState(""); // Ajout de l'teid
   const [status, setStatus] = useState<{
     loading: boolean;
     success: boolean;
@@ -38,15 +38,11 @@ const Cart: React.FC = () => {
       return;
     }
 
-    if (!customerEmail.trim()) {
-      setStatus({ loading: false, success: false, error: "Please enter a valid email address" });
-      return;
-    }
 
     setStatus({ loading: true, success: false, error: null });
 
     try {
-      const result = await sendCheckoutInfo(cart, total, customerName, customerPhone, customerEmail); // Pass email here
+      const result = await sendCheckoutInfo(cart, total, customerName, customerPhone, customertid); // Pass teid here
 
       if (result.success) {
         setStatus({ loading: false, success: true, error: null });
@@ -177,7 +173,7 @@ const Cart: React.FC = () => {
                     )}
 
                     <Form.Group className="mb-3">
-                      <Form.Label>Full Name</Form.Label>
+                      <Form.Label>Name</Form.Label>
                       <Form.Control
                         type="text"
                         value={customerName}
@@ -204,12 +200,12 @@ const Cart: React.FC = () => {
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                      <Form.Label>Email Address</Form.Label>
+                      <Form.Label>telegram id</Form.Label>
                       <Form.Control
-                        type="email"
-                        value={customerEmail}
-                        onChange={(e) => setCustomerEmail(e.target.value)}
-                        placeholder="Enter your email address"
+                        type="teid"
+                        value={customertid}
+                        onChange={(e) => setCustomertid(e.target.value)}
+                        placeholder="Enter your telegram id"
                         required
                         disabled={status.loading}
                       />
@@ -253,7 +249,7 @@ const Cart: React.FC = () => {
                       <Alert.Heading>Order Confirmed!</Alert.Heading>
                       <p>
                         Your order has been received successfully. We've sent a confirmation 
-                        to your email and will contact you shortly.
+                        to your teid and will contact you shortly.
                       </p>
                     </Alert>
                   )}

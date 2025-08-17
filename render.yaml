@@ -1,0 +1,23 @@
+staticSites:
+  - name: gaspass-frontend
+    rootDir: .                 # la racine du dépôt
+    env: node
+    buildCommand: |
+      npm ci
+      npm run build            # generate:data + vite build
+    publishPath: dist          # dossier de sortie Vite
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: DB_HOST
+        fromSecret: DB_HOST
+      - key: DB_PORT
+        fromSecret: DB_PORT
+      - key: DB_USER
+        fromSecret: DB_USER
+      - key: DB_PASS
+        fromSecret: DB_PASS
+      - key: DB_NAME
+        fromSecret: DB_NAME

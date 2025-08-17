@@ -12,7 +12,25 @@
   }
   
  
+  .bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
   
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Optionnel si tu veux garder l'effet de dégradé sombre */
+    z-index: 1;
+  }
   
   .home-title {
     font-size: 3.5rem;
@@ -104,3 +122,12 @@
       padding: 80px 0;
     }
   }
+
+  /* Styles CSS */
+.active {
+  filter: none; /* Aucun flou sur l'élément actif */
+}
+
+.inactive {
+  filter: blur(5px); /* Floute les éléments non actifs */
+}

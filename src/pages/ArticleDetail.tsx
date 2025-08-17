@@ -2,7 +2,7 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Container, Row, Col, Card, Badge } from "react-bootstrap";
 import { ArrowLeft, Calendar, Clock, Person } from "react-bootstrap-icons";
-import blogPosts from "../data/BlogData";
+import { getBlogPosts } from "../data/BlogPostData";
 import "./articledetailcss.css";
 
 // Define the type for your blog posts
@@ -26,8 +26,12 @@ const ArticleDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const postId = Number(id);
+  const [blogPosts, setBlogPosts] = React.useState<BlogPost[]>([]);
 
-  // Type the find result as BlogPost or undefined
+  React.useEffect(() => {
+    getBlogPosts().then(setBlogPosts).catch(console.error);
+  }, []);
+
   const post = blogPosts.find((p) => p.id === postId) as BlogPost | undefined;
 
   if (!post) {

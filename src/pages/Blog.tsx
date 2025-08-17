@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './blogcss.css';
 import { Container, Row, Col, Form, Button, Card, Badge, ListGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import blogpost from '../data/BlogData';
+import { getBlogPosts }  from '../data/BlogPostData' ;
 
 const Blog: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,8 +13,13 @@ const Blog: React.FC = () => {
   const [likedPosts, setLikedPosts] = useState<number[]>([]);
   const [showComments, setShowComments] = useState<number | null>(null);
   const [commentText, setCommentText] = useState('');
+  const [blogpost, setBlogpost] = useState<any[]>([]);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getBlogPosts().then(setBlogpost).catch(console.error);
+  }, []);
 
   const handleBlogClick = (postId: number) => {
     navigate(`/blog/${postId}`);
@@ -193,7 +198,7 @@ const Blog: React.FC = () => {
                         </Badge>
                       </div>
 
-                      <div className="d-flex gap-3 mb-2 small text-muted">
+                      <div className="d-flex gap-3 mb-2 small text">
                         <div>
                           <i className="bi bi-person me-1"></i>{post.author}
                         </div>
@@ -272,7 +277,7 @@ const Blog: React.FC = () => {
           ) : (
             <Card className="text-center py-5 shadow-sm">
               <Card.Body>
-                <h3 className="text-muted">No articles found</h3>
+                <h3 className="text">No articles found</h3>
                 <p className="mb-3">Try adjusting your search criteria</p>
                 <Button
                   variant="outline-danger"
@@ -320,7 +325,7 @@ const Blog: React.FC = () => {
                     />
                     <div>
                       <h6 className="mb-0">{post.title}</h6>
-                      <small className="text-muted">{post.date.split(' ')[0]}</small>
+                      <small className="text">{post.date.split(' ')[0]}</small>
                     </div>
                   </ListGroup.Item>
                 ))}

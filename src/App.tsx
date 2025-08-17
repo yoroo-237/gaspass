@@ -8,6 +8,8 @@ import Blog from "./pages/Blog"; // Assurez-vous que cette page existe
 import Contact from "./pages/Contact"; // Assurez-vous que cette page existe
 import Navbar from "./components/NavBar";
 import ProductDetails from "./pages/ProductDetail";
+import ReviewDetails from "./pages/ReviewDetails";
+
 import ArticleDetail from "./pages/ArticleDetail";
 import Footer from "./components/footer";
 import './darkTheme.css';
@@ -30,6 +32,8 @@ function App() {
         <Route path="/blog/:id" element={<ArticleDetail />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/About" element={<About />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/review/:id" element={<ReviewDetails />} />
       </Routes>
       <Footer />
     </div>
