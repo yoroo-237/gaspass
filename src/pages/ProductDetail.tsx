@@ -45,6 +45,12 @@ const ProductDetails: React.FC = () => {
     }
   };
 
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
+
+  function getProductImageUrl(path: string) {
+    return `${supabaseUrl}/storage/v1/object/public/product-images/${path}`;
+  }
+
   return (
     <Container className="py-5">
       <Button
@@ -60,7 +66,7 @@ const ProductDetails: React.FC = () => {
           <Card className="mb-4">
             <Card.Img
               variant="top"
-              src={product.image}
+              src={getProductImageUrl(product.image)}
               alt={product.name}
               className="p-4"
             />

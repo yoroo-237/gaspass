@@ -18,6 +18,12 @@ interface Product {
   stock: number;
 }
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
+
+function getProductImageUrl(path: string) {
+  return `${supabaseUrl}/storage/v1/object/public/product-images/${path}`;
+}
+
 const Products: React.FC = () => {
   const { addToCart } = useCartStore();
   const navigate = useNavigate();
@@ -153,7 +159,7 @@ const Products: React.FC = () => {
               </div>
               <Card.Img
                 variant="top"
-                src={product.image}
+                src={getProductImageUrl(product.image)}
                 alt={product.name}
                 className="product-img"
                 style={{ height: "280px", objectFit: "cover" }}

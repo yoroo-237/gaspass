@@ -14,6 +14,22 @@ const ReviewDetails: React.FC = () => {
   }, []);
   const review = reviews.find((r) => r.id === parseInt(id!, 10));
 
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
+  const supabaseBucket = 'public'; // Remplace par le nom réel de ton bucket si différent
+
+  function getPublicImageUrl(path: string) {
+    return `${supabaseUrl}/storage/v1/object/public/${supabaseBucket}/${path}`;
+  }
+  function getProductImageUrl(path: string) {
+    return `${supabaseUrl}/storage/v1/object/public/product-images/${path}`;
+  }
+  function getBlogImageUrl(path: string) {
+    return `${supabaseUrl}/storage/v1/object/public/blog-images/${path}`;
+  }
+  function getReviewAvatarUrl(path: string) {
+    return `${supabaseUrl}/storage/v1/object/public/review-avatars/${path}`;
+  }
+
   if (!review) {
     return (
       <Container className="py-5 text-center">
@@ -40,7 +56,7 @@ const ReviewDetails: React.FC = () => {
           <Row className="align-items-center">
             <Col xs="auto">
               <img
-                src={review.avatar}
+                src={getReviewAvatarUrl(review.avatar)}
                 alt={review.author}
                 className="rounded-circle"
                 style={{ width: 80, height: 80 }}

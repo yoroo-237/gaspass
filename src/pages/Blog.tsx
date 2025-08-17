@@ -77,13 +77,21 @@ const Blog: React.FC = () => {
     }
   };
 
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
+
+
+  function getBlogImageUrl(path: string) {
+    return `${supabaseUrl}/storage/v1/object/public/blog-images/${path}`;
+  }
+
+
   return (
     <Container className="blog-container py-5">
       <Row className="justify-content-center mb-5">
         <Col lg={12} className="text-center">
           <h1 className="blog-title display-4 fw-bold mb-3 position-relative d-inline-block">
             Our Blog
-            <span className="position-absolute bottom-0 start-50 translate-middle-x bg-danger" style={{ height: '4px', width: '80px' }}></span>
+            <span className="position-absolute bottom-0 start-50 translate-middle-x bg-danger blog-title-underline"></span>
           </h1>
           <p className="blog-subtitle lead text">
             Find our news, advice and updates here.
@@ -183,10 +191,9 @@ const Blog: React.FC = () => {
                 <Row className="g-0">
                   <Col md={5}>
                     <img
-                      src={post.image}
+                      src={getBlogImageUrl(post.image)}
                       alt={post.title}
-                      className="img-fluid h-100 rounded-start"
-                      style={{ objectFit: 'cover', minHeight: '200px' }}
+                      className="img-fluid h-100 rounded-start blog-post-image"
                     />
                   </Col>
                   <Col md={7}>
@@ -320,8 +327,7 @@ const Blog: React.FC = () => {
                       alt={post.title}
                       width="64"
                       height="64"
-                      className="rounded"
-                      style={{ objectFit: 'cover' }}
+                      className="rounded blog-recent-img"
                     />
                     <div>
                       <h6 className="mb-0">{post.title}</h6>

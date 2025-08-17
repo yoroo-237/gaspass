@@ -45,6 +45,12 @@ const ArticleDetail: React.FC = () => {
     );
   }
 
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
+
+  function getPublicImageUrl(path: string) {
+    return `${supabaseUrl}/storage/v1/object/public/blog-images/${path}`;
+  }
+
   return (
     <Container className="article-detail py-5">
       <Button 
@@ -79,7 +85,7 @@ const ArticleDetail: React.FC = () => {
           </div>
 
           <img 
-            src={post.image} 
+            src={getPublicImageUrl(post.image)} 
             alt={post.title} 
             className="article-image img-fluid rounded"
           />
