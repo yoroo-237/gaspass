@@ -3,19 +3,26 @@ const express = require('express');
 const cors = require('cors');
 const { Client } = require('pg');
 const app = express();
-const host = process.env.DB_HOST;
-const port = process.env.DB_PORT;
+
+
+
+// Pour override, utiliser les variables d'environnement si besoin
+const host = process.env.DB_HOST || 'localhost';
+const port = process.env.DB_PORT || 5432;
+const user = process.env.DB_USER || 'miguel';
+const password = process.env.DB_PASS || 'Mkomegmbdysdia4';
+const database = process.env.DB_NAME || 'gaspass';
 
 app.use(cors());
 app.use(express.json());
 
 function getClient() {
   return new Client({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
+    host,
+    port,
+    user,
+    password,
+    database,
   });
 }
 
