@@ -138,6 +138,10 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
-app.listen(port, host, () => {
-  console.log(`Backend lancé sur ${host}:${port}`);
+// Utiliser le port fourni par Render et écouter sur 0.0.0.0
+const listenPort = process.env.PORT || 3000;
+const listenHost = '0.0.0.0';
+
+app.listen(listenPort, listenHost, () => {
+  console.log(`Backend lancé sur ${listenHost}:${listenPort}`);
 });
