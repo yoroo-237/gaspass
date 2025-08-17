@@ -21,3 +21,23 @@ staticSites:
         fromSecret: DB_PASS
       - key: DB_NAME
         fromSecret: DB_NAME
+
+services:
+  - type: web
+    name: ecommerce-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.cjs
+    rootDir: ecommerce-backend
+    envVars:
+      - key: DB_HOST
+        value: localhost
+      - key: DB_PORT
+        value: 5432
+      - key: DB_USER
+        value: miguel
+      - key: DB_PASS
+        value: Mkomegmbdysdia4
+      - key: DB_NAME
+        value: gaspass
