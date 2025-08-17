@@ -124,6 +124,20 @@ app.get('/api/reviews', async (req, res) => {
   }
 });
 
+// Route de test pour vérifier la connexion à la base de données
+app.get('/api/test-db', async (req, res) => {
+  const client = getClient();
+  try {
+    await client.connect();
+    const result = await client.query('SELECT 1 as ok');
+    res.json({ success: true, db: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  } finally {
+    await client.end();
+  }
+});
+
 app.listen(port, host, () => {
   console.log(`Backend lancé sur ${host}:${port}`);
 });
