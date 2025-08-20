@@ -4,6 +4,7 @@ import { Button, Card, Container, Row, Col, Badge } from "react-bootstrap";
 import { StarFill, CartPlus, ArrowLeft } from "react-bootstrap-icons";
 import useCartStore from "../context/cartStore";
 import { getFeaturedProducts } from "../data/ProductData";
+import MediaCarousel from '../components/MediaCaroussel';
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,7 +47,6 @@ const ProductDetails: React.FC = () => {
   };
 
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
-
   function getProductImageUrl(path: string) {
     return `${supabaseUrl}/storage/v1/object/public/product-images/${path}`;
   }
@@ -64,12 +64,7 @@ const ProductDetails: React.FC = () => {
       <Row>
         <Col md={6}>
           <Card className="mb-4">
-            <Card.Img
-              variant="top"
-              src={getProductImageUrl(product.image)}
-              alt={product.name}
-              className="p-4"
-            />
+            <MediaCarousel media={[{ url: getProductImageUrl(product.image), type: 'image' }]} />
           </Card>
         </Col>
         <Col md={6}>

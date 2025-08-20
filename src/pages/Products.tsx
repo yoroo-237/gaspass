@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { getFeaturedProducts } from "../data/ProductData";
 import { getCategories } from '../data/CategoryData';
 import "./productcss.css";
+import MediaCarousel from '../components/MediaCaroussel';
 
 interface Product {
   id: number;
@@ -19,7 +20,6 @@ interface Product {
 }
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
-
 function getProductImageUrl(path: string) {
   return `${supabaseUrl}/storage/v1/object/public/product-images/${path}`;
 }
@@ -157,18 +157,12 @@ const Products: React.FC = () => {
                   {product.stock > 0 ? "In stock" : "Out of stock"}
                 </Badge>
               </div>
-              <Card.Img
-                variant="top"
-                src={getProductImageUrl(product.image)}
-                alt={product.name}
-                className="product-img"
-                style={{ height: "280px", objectFit: "cover" }}
-              />
+              <MediaCarousel media={[{ url: getProductImageUrl(product.image), type: 'image' }]} />
               <Card.Body className="d-flex flex-column justify-content-between">
                 <div>
                   <div className="d-flex justify-content-between align-items-start mb-2">
                     <Badge bg="light" text="dark">
-                      {categories.find(c => c.id === product.categoryId)?.name}
+                      {categories.find(c => c.id === product.category)?.name}
                     </Badge>
                     {product.rating && (
                       <div className="d-flex align-items-center">

@@ -25,6 +25,7 @@ import "react-multi-carousel/lib/styles.css";
 import { Product } from '../types/Products';
 import { Review } from "../types/Reviews";
 import { BlogPost } from "../types/BlogPost";
+import MediaCarousel from '../components/MediaCaroussel';
 
 
 const Home: React.FC = () => {
@@ -86,6 +87,11 @@ const Home: React.FC = () => {
     tablet: { breakpoint: { max: 768, min: 464 }, items: 1 },
     mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
   };
+
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
+  function getProductImageUrl(path: string) {
+    return `${supabaseUrl}/storage/v1/object/public/product-images/${path}`;
+  }
 
   return (
     <div className="home-page">
@@ -187,7 +193,10 @@ const Home: React.FC = () => {
             {featuredProducts.map((product) => (
               <Col key={product.id}>
                 <Card className="h-100 product-card">
+                  {/*
                   <Card.Img variant="top" src={product.image} />
+                  */}
+                  <MediaCarousel media={[{ url: getProductImageUrl(product.image), type: 'image' }]} />
                   <Card.Body>
                     <span className="badge bg-secondary mb-2">
                       {product.category}
