@@ -27,7 +27,6 @@ import { Review } from "../types/Reviews";
 import { BlogPost } from "../types/BlogPost";
 import MediaCarousel from '../components/MediaCaroussel';
 
-
 const Home: React.FC = () => {
   const { addToCart } = useCartStore();
   const navigate = useNavigate();
@@ -46,6 +45,7 @@ const Home: React.FC = () => {
   const handleProductClick = (productId: number) => {
     navigate(`/products/${productId}`);
   };
+  
   const handleAddToCart = (
     product: Product,
     e: React.MouseEvent<HTMLButtonElement>
@@ -66,10 +66,10 @@ const Home: React.FC = () => {
       alert("Out of stock");
     }
   };
+  
   const handleReviewClick = (id: number) => {
     navigate(`/review/${id}`);
   };
-  
 
   // Navigation handlers
   const handleExploreClick = () => navigate("/products");
@@ -89,9 +89,28 @@ const Home: React.FC = () => {
   };
 
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
+  
   function getProductImageUrl(path: string) {
     return `${supabaseUrl}/storage/v1/object/public/product-images/${path}`;
   }
+
+  // Fonction pour préparer les médias pour le carousel
+  const prepareProductMedia = (product: Product) => {
+    // Si le produit a plusieurs images/vidéos, créez un tableau
+    // Sinon, utilisez l'image principale
+    if (product.images && Array.isArray(product.images)) {
+      return product.images.map((imagePath: string) => ({
+        url: getProductImageUrl(imagePath),
+        type: 'image'
+      }));
+    } else if (product.image) {
+      return [{
+        url: getProductImageUrl(product.image),
+        type: 'image'
+      }];
+    }
+    return [];
+  };
 
   return (
     <div className="home-page">
@@ -108,7 +127,7 @@ const Home: React.FC = () => {
             Welcome to the OFFICIAL <span className="highlight">GasPass🍁</span>
           </h1>
           <p className="home-subtext">
-            you’ll get the best prices for the quality, stealth, and fast delivery.
+            you'll get the best prices for the quality, stealth, and fast delivery.
           </p>
           <Button
             variant="danger"
@@ -136,11 +155,11 @@ const Home: React.FC = () => {
               <h2 className="section-title">About GasPass</h2>
               <p className="lead">
                 GasPass is a collective group of cannabis connoisseurs that fell in love with the art of growing.
-                Throughout the past decade, we’ve been trying to perfect our craft by providing our fellow smokers and bag chasers with the best quality flower there is! Our goal is to build a bridge for everybody throughout the states to have access to top-notch, potent cannabis.
+                Throughout the past decade, we've been trying to perfect our craft by providing our fellow smokers and bag chasers with the best quality flower there is! Our goal is to build a bridge for everybody throughout the states to have access to top-notch, potent cannabis.
                 Dealing with us, we provide the utmost transparency so everybody can be on the same page.
               </p>
               <p>
-               On top of that, you’ll get the best prices for the quality, stealth, and fast delivery.
+               On top of that, you'll get the best prices for the quality, stealth, and fast delivery.
                 We carefully select each product in our catalog to ensure an optimal user experience.
               </p>
               <Button
@@ -185,122 +204,137 @@ const Home: React.FC = () => {
         </Container>
       </section>
 
-      {/* Products Section */}
+      {/* Products Section - Corrigée */}
       <section className="products-section py-5">
         <Container>
           <h2 className="section-title mb-5 text-center">Our Best Sellers</h2>
           <Row xs={1} md={2} lg={4} className="g-4">
-            {featuredProducts.map((product) => (
-              <Col key={product.id}>
-                <Card className="h-100 product-card">
-                  {/*
-                  <Card.Img variant="top" src={product.image} />
-                  */}
-                  <MediaCarousel media={[{ url: getProductImageUrl(product.image), type: 'image' }]} />
-                  <Card.Body>
-                    <span className="badge bg-secondary mb-2">
-                      {product.category}
-                    </span>
-                    <Card.Title>{product.name}</Card.Title>
-                    <Card.Text className="product-description">
-                      {product.description}
-                    </Card.Text>
-                    <div className="d-flex justify-content-between mt-3">
-                      <span className="price">
-                        {product.price.toLocaleString()} $
-                      </span>
-                      <span className="rating">
-                        <StarFill className="text-warning" />{" "}
-                        {product.rating ?? "N/A"}
-                      </span>
+            {featuredProducts.map((product) => {
+              const productMedia = prepareProductMedia(product);
+              
+              return (
+                <Col key={product.id}>
+                  <Card className="h-100 product-card">
+                    {/* Utilisation corrigée du MediaCarousel */}
+                    <div className="product-image-container">
+                      {productMedia.length > 0 ? (
+                        <MediaCarousel media={productMedia} />
+                      ) : (
+                        <div className="no-image-placeholder d-flex align-items-center justify-content-center">
+                          <span className="text-muted">No image available</span>
+                        </div>
+                      )}
                     </div>
-                  </Card.Body>
-                  <Card.Footer>
-                    <Button
-                      variant="outline-danger"
-                      className="w-100 mb-2"
-                      onClick={() => handleProductClick(product.id)}
-                    >
-                      View Product <ArrowRight className="ms-2" />
-                    </Button>
-                    <Button
-                      variant="outline-success"
-                      className="w-100"
-                      onClick={(e) => handleAddToCart(product, e)}
-                    >
-                      Add to Cart <CartIcon className="ms-2" />
-                    </Button>
-                  </Card.Footer>
-                </Card>
-              </Col>
-            ))}
+                    
+                    <Card.Body className="d-flex flex-column">
+                      <span className="badge bg-secondary mb-2 align-self-start">
+                        {product.category}
+                      </span>
+                      <Card.Title>{product.name}</Card.Title>
+                      <Card.Text className="product-description flex-grow-1">
+                        {product.description}
+                      </Card.Text>
+                      <div className="d-flex justify-content-between align-items-center mt-auto">
+                        <span className="price">
+                          ${product.price.toLocaleString()}
+                        </span>
+                        <span className="rating">
+                          <StarFill className="text-warning me-1" />
+                          {product.rating ?? "N/A"}
+                        </span>
+                      </div>
+                    </Card.Body>
+                    
+                    <Card.Footer className="bg-transparent">
+                      <Button
+                        variant="outline-danger"
+                        className="w-100 mb-2"
+                        onClick={() => handleProductClick(product.id)}
+                      >
+                        View Product <ArrowRight className="ms-2" />
+                      </Button>
+                      <Button
+                        variant="outline-success"
+                        className="w-100"
+                        onClick={(e) => handleAddToCart(product, e)}
+                        disabled={product.stock === 0}
+                      >
+                        {product.stock > 0 ? (
+                          <>Add to Cart <CartIcon className="ms-2" /></>
+                        ) : (
+                          "Out of Stock"
+                        )}
+                      </Button>
+                    </Card.Footer>
+                  </Card>
+                </Col>
+              );
+            })}
           </Row>
         </Container>
       </section>
 
-      {/* Reviews Section (horizontal) */}
+      {/* Reviews Section */}
       <section className="reviews-section py-5 bg-light">
-  <Container>
-    <h2 className="section-title mb-5 text-center">Customer Reviews</h2>
-    <MultiCarousel
-      responsive={reviewsResponsive}
-      infinite
-      autoPlay
-      autoPlaySpeed={1000}
-      arrows
-      showDots
-      containerClass="reviews-carousel"
-      itemClass="px-3"
-    >
-      {reviews.map((review) => (
-        <Card key={review.id} className="h-100 d-flex flex-column">
-          <Card.Body className="flex-grow-1">
-            <div className="d-flex align-items-center mb-3">
-              <img
-                src={review.avatar}
-                alt={review.author}
-                className="avatar me-3"
-                style={{ width: 50, height: 50, borderRadius: "50%" }}
-              />
-              <div>
-                <Card.Title>{review.author}</Card.Title>
-                <div className="d-flex">
-                  {[...Array(5)].map((_, idx) => (
-                    <StarFill
-                      key={idx}
-                      className={
-                        idx < Math.floor(review.rating!)
-                          ? "text-warning"
-                          : "text-muted"
-                      }
-                      style={{ width: 20, height: 20 }}
+        <Container>
+          <h2 className="section-title mb-5 text-center">Customer Reviews</h2>
+          <MultiCarousel
+            responsive={reviewsResponsive}
+            infinite
+            autoPlay
+            autoPlaySpeed={1000}
+            arrows
+            showDots
+            containerClass="reviews-carousel"
+            itemClass="px-3"
+          >
+            {reviews.map((review) => (
+              <Card key={review.id} className="h-100 d-flex flex-column">
+                <Card.Body className="flex-grow-1">
+                  <div className="d-flex align-items-center mb-3">
+                    <img
+                      src={review.avatar}
+                      alt={review.author}
+                      className="avatar me-3"
+                      style={{ width: 50, height: 50, borderRadius: "50%" }}
                     />
-                  ))}
-                </div>
-              </div>
-            </div>
-            <Card.Text>{review.text}</Card.Text>
-            <div className="text-muted">
-              <small>{review.date}</small>
-            </div>
-          </Card.Body>
+                    <div>
+                      <Card.Title className="mb-1">{review.author}</Card.Title>
+                      <div className="d-flex">
+                        {[...Array(5)].map((_, idx) => (
+                          <StarFill
+                            key={idx}
+                            className={
+                              idx < Math.floor(review.rating!)
+                                ? "text-warning"
+                                : "text-muted"
+                            }
+                            style={{ width: 16, height: 16 }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <Card.Text>{review.text}</Card.Text>
+                  <div className="text-muted">
+                    <small>{review.date}</small>
+                  </div>
+                </Card.Body>
 
-          {/* ← Ajout du footer avec Read More */}
-          <Card.Footer className="bg-transparent border-0 mt-auto">
-            <Button
-              variant="link"
-              className="px-0"
-              onClick={() => handleReviewClick(review.id)}
-            >
-              Read More <ArrowRight className="ms-2" />
-            </Button>
-          </Card.Footer>
-        </Card>
-      ))}
-    </MultiCarousel>
-  </Container>
-</section>
-
+                <Card.Footer className="bg-transparent border-0 mt-auto">
+                  <Button
+                    variant="link"
+                    className="px-0 text-decoration-none"
+                    onClick={() => handleReviewClick(review.id)}
+                  >
+                    Read More <ArrowRight className="ms-1" />
+                  </Button>
+                </Card.Footer>
+              </Card>
+            ))}
+          </MultiCarousel>
+        </Container>
+      </section>
     </div>
   );
 };
